@@ -1,14 +1,5 @@
 #! /usr/bin/env python3
 
-"""
-Simple rate-limiting LDAP proxy
-Based on https://ldaptor.readthedocs.io/en/latest/cookbook/ldap-proxy.html
-Limits the number of requests per minute that are sent to the upstream LDAP server.
-No fancy sliding window, just a timer that resets the number of requests every minute and prints out the number of requests per minute
-
-CC-0, Raphael Wimmer, 2024
-"""
-
 from ldaptor.protocols import pureldap
 from ldaptor.protocols.ldap.ldaperrors import LDAPTimeLimitExceeded
 from ldaptor.protocols.ldap.ldapclient import LDAPClient
@@ -21,11 +12,6 @@ from functools import partial
 import sys
 import threading
 import time
-
-PROTOCOL = "ssl"  # ssl or tcp
-SERVER = "ldap.example.com"
-SERVER_PORT = 636
-LOCAL_PORT = 10636
 
 
 class RateLimiter:
@@ -99,7 +85,7 @@ if __name__ == '__main__':
     log.startLogging(sys.stderr)
     # log.startLogging(DailyLogFile.fromFullPath("/var/log/ldapproxy.log"))
     factory = protocol.ServerFactory()
-    proxiedEndpointStr = '{PROTOCOL}:host={SERVER}:port={SERVER_PORT}'
+    proxiedEndpointStr = 'ssl:host=ldapauth.uni-regensburg.de:port=636'
     use_tls = False
     clientConnector = partial(
         connectToLDAPEndpoint,
@@ -114,5 +100,5 @@ if __name__ == '__main__':
         return proto
 
     factory.protocol = buildProtocol
-    reactor.listenTCP(LOCAL_PORT, factory)
+    reactor.listenTCP(10389, factory)
     reactor.run()
