@@ -96,6 +96,8 @@ def ldapBindRequestRepr(self):
 pureldap.LDAPBindRequest.__repr__ = ldapBindRequestRepr
 
 if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        LOCAL_PORT = int(sys.argv[1])
     log.startLogging(sys.stderr)
     # log.startLogging(DailyLogFile.fromFullPath("/var/log/ldapproxy.log"))
     factory = protocol.ServerFactory()
